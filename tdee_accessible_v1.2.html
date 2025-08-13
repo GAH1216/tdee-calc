@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Free TDEE Calculator — Daily Calorie Needs, BMR, Activity Guide &amp; FAQ</title>
+<meta name="description" content="Free TDEE calculator with BMR, activity multipliers, 12‑week projections, AMAB/AFAB with optional HRT blending, and body‑fat based Katch–McArdle. Includes activity guide and FAQ."/>
+<meta name="robots" content="index, follow"/>
+<meta property="og:title" content="Free TDEE Calculator — Find Your Daily Calorie Needs"/>
+<meta property="og:description" content="Calculate TDEE for weight loss, gain, or maintenance. Includes AMAB/AFAB + HRT blending and Katch–McArdle option. Activity guide &amp; FAQ included."/>
+<meta property="og:type" content="website"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Free TDEE Calculator — Find Your Daily Calorie Needs"/>
+<meta name="twitter:description" content="Calculate TDEE &amp; BMR with inclusive options, activity guide, and FAQ."/>
+<link rel="stylesheet" href="tdee_accessible_v1.2.css"/>
+</head>
+<body>
+<a class="skip-link" href="#calculator">Skip to calculator</a>
+
+<!-- Background bubbles -->
+<div class="bubble" style="width:80px;height:80px;left:10%;animation-delay:0s;"></div>
+<div class="bubble" style="width:120px;height:120px;left:70%;animation-delay:2s;"></div>
+<div class="bubble" style="width:60px;height:60px;left:40%;animation-delay:4s;"></div>
+<div class="bubble" style="width:100px;height:100px;left:85%;animation-delay:6s;"></div>
+<div class="bubble" style="width:90px;height:90px;left:25%;animation-delay:8s;"></div>
+<div class="bubble" style="width:70px;height:70px;left:55%;animation-delay:10s;"></div>
+
+<div class="container">
+  <header>
+    <div class="calculator-card">
+      <h1 id="top">Free TDEE Calculator — Find Your Daily Calorie Needs</h1>
+      <p class="subtitle">Use our TDEE (Total Daily Energy Expenditure) calculator to estimate calories for weight loss, muscle gain, or maintenance. Includes BMR, activity multipliers, AMAB/AFAB + HRT options, and 12‑week projections.</p>
+
+      <!-- Top nav -->
+      <nav aria-label="Quick links">
+        <div class="navlinks">
+          <a href="#calculator">Calculator</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#activity-guide">Activity Guide</a>
+          <a href="#bounce-back">Binge Eating</a>
+          <a href="#faq">FAQ</a>
+        </div>
+      </nav>
+
+      <section id="calculator" aria-label="TDEE Calculator">
+        <h2 class="section-title">Calculate Your TDEE (Total Daily Energy Expenditure)</h2>
+
+        <!-- Unit first, then identity (mobile stacks via CSS) -->
+        <div class="unit-toggle">
+          <button type="button" class="unit-btn active" data-unit="imperial" aria-pressed="true">Imperial (lbs/ft)</button>
+          <button type="button" class="unit-btn" data-unit="metric" aria-pressed="false">Metric (kg/cm)</button>
+        </div>
+
+        <!-- Single-choice 4-button group -->
+        <div class="four-grid single-choice" role="radiogroup" aria-label="Sex assigned and identity options">
+          <button class="grid-btn sel-btn active" data-choice="male" role="radio" aria-checked="true" type="button">Male</button>
+          <button class="grid-btn sel-btn" data-choice="female" role="radio" aria-checked="false" type="button">Female</button>
+          <button class="grid-btn sel-btn" data-choice="AMAB" role="radio" aria-checked="false" type="button">Assigned Male at Birth (AMAB)</button>
+          <button class="grid-btn sel-btn" data-choice="AFAB" role="radio" aria-checked="false" type="button">Assigned Female at Birth (AFAB)</button>
+        </div>
+        <small class="help center">Choose exactly one. Male/Female uses standard equations. AMAB/AFAB enables HRT options.</small>
+
+        <div class="form-grid">
+          <!-- HRT (collapsed by default; shown via JS when AMAB/AFAB) -->
+          <div class="form-group hrt-only" id="hrtTypeGroup" style="display:none;">
+            <label for="hrtType">On Hormones (HRT)?</label>
+            <select id="hrtType">
+              <option value="none" selected>No</option>
+              <option value="feminizing">Feminizing</option>
+              <option value="masculinizing">Masculinizing</option>
+            </select>
+          </div>
+          <div class="form-group hrt-only" id="monthsHRTGroup" style="display:none;">
+            <label for="monthsHRT">Months on HRT</label>
+            <input id="monthsHRT" type="number" min="0" max="60" step="1" placeholder="e.g., 6"/>
+          </div>
+
+          <!-- Age -->
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input id="age" type="number" min="1" max="120" required placeholder="Enter your age"/>
+          </div>
+
+          <!-- Weight -->
+          <div class="form-group">
+            <label for="weight">Weight (<span id="weightUnit">lbs</span>)</label>
+            <input id="weight" type="number" min="1" step="0.1" required placeholder="Enter your weight"/>
+          </div>
+
+          <!-- Height -->
+          <div class="form-group" id="heightImperial">
+            <label for="feet">Height</label>
+            <div class="height-row">
+              <label class="visually-hidden" for="feet">Height (feet)</label>
+              <input id="feet" type="number" min="0" placeholder="Feet"/>
+              <label class="visually-hidden" for="inches">Height (inches)</label>
+              <input id="inches" type="number" min="0" max="11" step="1" placeholder="Inches"/>
+            </div>
+          </div>
+          <div class="form-group" id="heightMetric" style="display:none;">
+            <label for="heightCm">Height (cm)</label>
+            <input id="heightCm" type="number" min="1" step="0.1" placeholder="Enter height in cm"/>
+          </div>
+
+          <!-- Optional body-fat % -->
+          <div class="form-group full-row">
+            <label for="bodyFatPct">Body Fat % (optional)</label>
+            <input id="bodyFatPct" type="number" min="1" max="60" step="0.1" placeholder="e.g., 22"/>
+            <small class="help">If provided, we’ll use Katch–McArdle (sex‑neutral) for BMR.</small>
+          </div>
+
+          <!-- Activity -->
+          <div class="form-group full-row">
+            <label for="activity">Activity Level</label>
+            <select id="activity" required>
+              <option value="">Select your activity level</option>
+              <option value="1.2">Sedentary (little or no exercise)</option>
+              <option value="1.375">Lightly active (1-3 days/week)</option>
+              <option value="1.55">Moderately active (3-5 days/week)</option>
+              <option value="1.725">Very active (6-7 days/week)</option>
+              <option value="1.9">Super active (physical job or 2x training)</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="calcBtn" class="calculate-btn" type="button" aria-label="Calculate your TDEE">Calculate TDEE</button>
+      </section>
+
+      <section id="results" class="results" aria-live="polite" aria-label="Results">
+        <div class="result-card">
+          <h3>Your Estimated TDEE</h3>
+          <div id="tdeeValue" class="tdee-value">—</div>
+        </div>
+
+        <h3 class="goals-title">Tap a goal to see a 12‑week projection</h3>
+        <div class="calorie-goals">
+          <div class="goal-card" role="button" tabindex="0">
+            <div class="goal-title">Maintain</div>
+            <div class="goal-calories" id="maintain" data-change-lbs="0">—</div>
+            <div class="goal-description">Stay around your TDEE to maintain current weight.</div>
+          </div>
+          <div class="goal-card" role="button" tabindex="0">
+            <div class="goal-title">Lose 0.5 lb/week</div>
+            <div class="goal-calories" id="lose05" data-change-lbs="-0.5">—</div>
+            <div class="goal-description">Gentle, sustainable fat loss.</div>
+          </div>
+          <div class="goal-card" role="button" tabindex="0">
+            <div class="goal-title">Lose 1 lb/week</div>
+            <div class="goal-calories" id="lose1" data-change-lbs="-1">—</div>
+            <div class="goal-description">Moderate deficit for steady results.</div>
+          </div>
+          <div class="goal-card" role="button" tabindex="0">
+            <div class="goal-title">Lose 1.5 lb/week</div>
+            <div class="goal-calories" id="lose15" data-change-lbs="-1.5">—</div>
+            <div class="goal-description">Aggressive — monitor energy &amp; recovery.</div>
+          </div>
+          <div class="goal-card" role="button" tabindex="0">
+            <div class="goal-title">Gain 0.5 lb/week</div>
+            <div class="goal-calories" id="gain05" data-change-lbs="0.5">—</div>
+            <div class="goal-description">Lean bulk to support muscle gain.</div>
+          </div>
+          <div class="goal-card" role="button" tabindex="0">
+            <div class="goal-title">Gain 1 lb/week</div>
+            <div class="goal-calories" id="gain1" data-change-lbs="1">—</div>
+            <div class="goal-description">Faster gains, higher fat risk.</div>
+          </div>
+        </div>
+
+        <p class="projection-note">Select a goal card above to draw your 12‑week weight projection.</p>
+
+        <div id="projectionChart" class="chart-wrap" style="display:none;">
+          <svg id="weightChart" role="img" aria-label="12‑week weight projection chart" viewBox="0 0 800 400" preserveAspectRatio="xMidYMid meet"></svg>
+          <p id="chartSummary" class="center" aria-live="polite"></p>
+          <div id="chartTableWrap" class="visually-hidden" aria-hidden="true"></div>
+          <div class="center">
+            <button id="dlChartBtn" class="download-btn" type="button" aria-label="Download chart as PNG">Download chart (PNG)</button>
+            <button id="dlChartSVGBtn" class="download-btn" type="button" aria-label="Download chart as SVG">Download chart (SVG)</button>
+          </div>
+        </div>
+
+        <p class="center"><a href="#calculator">↑ Back to Calculator</a></p>
+      </section>
+
+      <!-- Activity Level Guide -->
+      <section class="info-section" id="activity-guide">
+        <h2>Activity Level Guide</h2>
+        <div class="activity-levels">
+          <div class="activity-item">
+            <strong>Sedentary (1.2× BMR)</strong> Little or no exercise, desk job
+            <div class="activity-examples">• Office work most of the day • Driving • Reading/Computer • Minimal walking</div>
+          </div>
+          <div class="activity-item">
+            <strong>Lightly Active (1.375× BMR)</strong> Light exercise 1–3 days/week
+            <div class="activity-examples">• 30‑min walks • Light yoga • Weekend bike rides • Golf with cart • Light housework</div>
+          </div>
+          <div class="activity-item">
+            <strong>Moderately Active (1.55× BMR)</strong> Moderate exercise 3–5 days/week
+            <div class="activity-examples">• Jogging • Laps 30–45 min • Tennis/Basketball • Gym 3–5 days • Dancing classes</div>
+          </div>
+          <div class="activity-item">
+            <strong>Very Active (1.725× BMR)</strong> Hard exercise 6–7 days/week
+            <div class="activity-examples">• 5+ mile runs • Intense gym sessions • Competitive training • CrossFit/HIIT • Manual labor</div>
+          </div>
+          <div class="activity-item">
+            <strong>Super Active (1.9× BMR)</strong> Physical job or two‑a‑days
+            <div class="activity-examples">• Pro/Endurance training • Military • Multiple classes taught • Heavy labor</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works -->
+      <section class="info-section" id="how-it-works">
+        <h2>How This Calculator Determines Your TDEE</h2>
+        <p style="margin-bottom:20px;">Your <strong>TDEE</strong> is BMR × activity factor. We support Mifflin–St Jeor (with Male/Female or AMAB/AFAB + optional HRT blending) and Katch–McArdle when you provide body‑fat %.</p>
+
+        <div class="formula-box">
+          <h3>Mifflin-St Jeor</h3>
+          <div class="formula-step">
+            <p><strong>Step 1: Calculate BMR (Basal Metabolic Rate)</strong></p>
+            <p>We use the scientifically-validated Mifflin-St Jeor Equation:</p>
+            <p><em>Men:</em> BMR = (10 × weight in kg) + (6.25 × height in cm) - (5 × age) + 5</p>
+            <p><em>Women:</em> BMR = (10 × weight in kg) + (6.25 × height in cm) - (5 × age) - 161</p>
+
+            <p><em>AMAB (baseline):</em> <code>BMR_AMAB = (10 × weight in kg) + (6.25 × height in cm) − (5 × age) + 5</code></p>
+            <p><em>AFAB (baseline):</em> <code>BMR_AFAB = (10 × weight in kg) + (6.25 × height in cm) − (5 × age) − 161</code></p>
+            <p><strong>HRT blending (optional)</strong></p>
+            <p>Let <code>t = clamp(months_on_HRT ÷ 12, 0..1)</code>.</p>
+            <p><em>AMAB + feminizing HRT:</em> <code>BMR = (1 − t) × BMR_AMAB + t × BMR_AFAB</code></p>
+            <p><em>AFAB + masculinizing HRT:</em> <code>BMR = (1 − t) × BMR_AFAB + t × BMR_AMAB</code></p>
+          </div>
+
+          <div class="formula-step">
+            <p><strong>Step 2: Multiply BMR by Activity Factor</strong></p>
+            <p>TDEE = BMR × Activity Level (1.2 to 1.9)</p>
+          </div>
+          <div class="formula-step">
+            <p><strong>Step 3: Adjust for Your Goals</strong></p>
+            <p><em>Weight Loss:</em> Eat 250-750 calories below TDEE</p>
+            <p><em>Weight Gain:</em> Eat 250-500 calories above TDEE</p>
+            <p><em>Maintenance:</em> Eat at your TDEE level</p>
+          </div>
+
+          <h3 style="margin-top:15px;">Katch–McArdle (sex‑neutral)</h3>
+          <div>
+            <div class="formula-step"><p><strong>Step 1: Calculate Lean Body Mass (LBM)</strong></p><p>LBM (kg) = Weight (kg) × (1 − Body Fat % in decimal form)</p></div>
+            <div class="formula-step"><p><strong>Step 2: Calculate BMR</strong></p><p>BMR = 370 + (21.6 × LBM in kg)</p></div>
+            <div class="formula-step"><p><strong>Step 3: Multiply BMR by Activity Factor</strong></p><p>TDEE = BMR × Activity Level (1.2 to 1.9)</p></div>
+            <div class="formula-step"><p><strong>Step 4: Adjust for Your Goals</strong></p><p>Weight Loss: Eat 250–750 calories below TDEE</p><p>Weight Gain: Eat 250–500 calories above TDEE</p><p>Maintenance: Eat at your TDEE level</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Binge section with accessible, labeled bars and patterns -->
+      <section class="info-section" id="bounce-back">
+        <h2>🍩 One “Binge” Doesn’t Undo Your Deficit</h2>
+        <p><strong>Calories work a lot like money:</strong> If you save $5 every day and one day you spend $12 on a snack, you still saved money that week. Calories work the same way. It can give you a bad feeling to have less money or calories, but the good news is you are not starting over from zero, you can still make progress.</p>
+
+        <div class="formula-box">
+          <h3 style="margin-top:0;">Real‑world example</h3>
+          <ul>
+            <li>You aim for a <strong>500‑calorie daily deficit</strong> (that’s about <em>3,500 calories per week</em>).</li>
+            <li>One day you “binge” and eat <strong>+1,200 calories</strong> over target.</li>
+            <li>Weekly math: <strong>3,500 − 1,200 = 2,300 calories</strong> of deficit still remain.</li>
+            <li>That’s roughly <strong>~0.66 lb</strong> (≈ <strong>0.3 kg</strong>) of fat loss still on the table for the week.</li>
+            <li>Any fast jump on the scale is mostly <em>water and sodium</em>. Get back to normal, and it settles in a few days.</li>
+          </ul>
+        </div>
+
+        <figure class="center" style="margin-top:22px;">
+          <svg role="img" aria-labelledby="bbTitle bbDesc" viewBox="0 0 760 360" width="100%" height="auto">
+            <title id="bbTitle">Weekly deficit with one binge day</title>
+            <desc id="bbDesc">Six days show a 500 calorie deficit, one day shows a 1200 calorie surplus. Net weekly deficit remains 2300 calories.</desc>
+
+            <defs>
+              <!-- Green diagonal stripe pattern for deficit (colorblind-friendly) -->
+              <pattern id="patDeficit" patternUnits="userSpaceOnUse" width="8" height="8" patternTransform="rotate(45)">
+                <rect width="8" height="8" fill="#43cea2" opacity="0.9"></rect>
+                <rect width="8" height="2" y="0" fill="#ffffff" opacity="0.25"></rect>
+              </pattern>
+              <!-- Red dot pattern for binge (colorblind-friendly) -->
+              <pattern id="patBinge" patternUnits="userSpaceOnUse" width="8" height="8">
+                <rect width="8" height="8" fill="#ff6b6b" opacity="0.9"></rect>
+                <circle cx="2" cy="2" r="1" fill="#ffffff" opacity="0.3"></circle>
+                <circle cx="6" cy="6" r="1" fill="#ffffff" opacity="0.3"></circle>
+              </pattern>
+            </defs>
+
+            <!-- Background -->
+            <rect x="0" y="0" width="760" height="360" fill="#fafafa" rx="16"></rect>
+
+            <!-- Axes -->
+            <line x1="60" y1="300" x2="720" y2="300" stroke="#333" stroke-width="2"></line>
+            <line x1="60" y1="60" x2="60" y2="300" stroke="#333" stroke-width="2"></line>
+
+            <!-- Labels & gridlines -->
+            <text x="380" y="32" text-anchor="middle" font-size="18" font-weight="700" fill="#185a9d">
+              One Binge Day vs Weekly Deficit
+            </text>
+            <text x="30" y="110" text-anchor="end" font-size="12" fill="#444">+1,200</text>
+            <line x1="58" y1="120" x2="720" y2="120" stroke="#e0e0e0"></line>
+            <text x="30" y="260" text-anchor="end" font-size="12" fill="#444">−500</text>
+            <line x1="58" y1="260" x2="720" y2="260" stroke="#e0e0e0"></line>
+
+            <!-- Day labels -->
+            <g font-size="12" fill="#444">
+              <text x="120" y="320" text-anchor="middle">Mon</text>
+              <text x="190" y="320" text-anchor="middle">Tue</text>
+              <text x="260" y="320" text-anchor="middle">Wed</text>
+              <text x="330" y="320" text-anchor="middle">Thu</text>
+              <text x="400" y="320" text-anchor="middle">Fri</text>
+              <text x="470" y="320" text-anchor="middle">Sat</text>
+              <text x="540" y="320" text-anchor="middle">Sun</text>
+            </g>
+
+            <!-- Deficit bars (6 days) with numeric labels (-500) -->
+            <g aria-label="Deficit days, minus 500 calories each">
+              <rect x="100" y="260" width="40" height="40" fill="url(#patDeficit)" stroke="#2e8b75" rx="6"></rect>
+              <text x="120" y="255" text-anchor="middle" font-size="12" fill="#2e8b75" font-weight="700">−500</text>
+
+              <rect x="170" y="260" width="40" height="40" fill="url(#patDeficit)" stroke="#2e8b75" rx="6"></rect>
+              <text x="190" y="255" text-anchor="middle" font-size="12" fill="#2e8b75" font-weight="700">−500</text>
+
+              <rect x="240" y="260" width="40" height="40" fill="url(#patDeficit)" stroke="#2e8b75" rx="6"></rect>
+              <text x="260" y="255" text-anchor="middle" font-size="12" fill="#2e8b75" font-weight="700">−500</text>
+
+              <rect x="310" y="260" width="40" height="40" fill="url(#patDeficit)" stroke="#2e8b75" rx="6"></rect>
+              <text x="330" y="255" text-anchor="middle" font-size="12" fill="#2e8b75" font-weight="700">−500</text>
+
+              <rect x="380" y="260" width="40" height="40" fill="url(#patDeficit)" stroke="#2e8b75" rx="6"></rect>
+              <text x="400" y="255" text-anchor="middle" font-size="12" fill="#2e8b75" font-weight="700">−500</text>
+
+              <rect x="520" y="260" width="40" height="40" fill="url(#patDeficit)" stroke="#2e8b75" rx="6"></rect>
+              <text x="540" y="255" text-anchor="middle" font-size="12" fill="#2e8b75" font-weight="700">−500</text>
+
+              <text x="590" y="230" text-anchor="middle" font-size="12" fill="#185a9d" font-weight="700">Deficit days</text>
+            </g>
+
+            <!-- Binge bar with numeric label (+1200) -->
+            <g aria-label="Binge day, plus 1200 calories">
+              <rect x="450" y="120" width="40" height="140" fill="url(#patBinge)" stroke="#c0392b" rx="6"></rect>
+              <text x="470" y="110" text-anchor="middle" font-size="12" fill="#c0392b" font-weight="700">+1,200</text>
+            </g>
+
+            <!-- Weekly net box -->
+            <g>
+              <rect x="585" y="70" width="150" height="84" fill="#fff" stroke="#185a9d" stroke-width="2" rx="10"></rect>
+              <text x="660" y="95" text-anchor="middle" font-size="13" font-weight="700" fill="#185a9d">Weekly Net</text>
+              <text x="660" y="115" text-anchor="middle" font-size="14" font-weight="700" fill="#185a9d">Deficit: 2,300</text>
+              <text x="660" y="133" text-anchor="middle" font-size="12" fill="#333">≈ 0.66 lb (0.3 kg)</text>
+            </g>
+          </svg>
+          <figcaption style="color:#444; margin-top:8px;">Result: you still have a meaningful weekly deficit. Get back on track the next day.</figcaption>
+        </figure>
+      </section>
+
+      <section class="info-section" id="using-tdee-results"><h2>🎯 Using Your TDEE Results for Success</h2>
+        <p>Once you've calculated your TDEE with our free calculator, here's how to use it effectively:</p>
+        <div class="tdee-tips-list">
+          <ul>
+            <li><strong>Track Your Calories:</strong> Use a food diary or app to ensure you're hitting your calorie targets</li>
+            <li><strong>Be Consistent:</strong> Stick to your calorie goal for at least 2-3 weeks before making adjustments</li>
+            <li><strong>Monitor Progress:</strong> Weigh yourself weekly at the same time of day</li>
+            <li><strong>Adjust as Needed:</strong> If you're not seeing results after 3 weeks, adjust calories by 100-150</li>
+            <li><strong>Consider Macros:</strong> Aim for adequate protein (0.7-1g per lb body weight) for best results</li>
+            <li><strong>Stay Active:</strong> Regular exercise increases your TDEE and improves body composition</li>
+          </ul>
+        </div>
+        <p class="center"><a href="#top">↑ Back to Top</a></p>
+      </section>
+
+      <!-- FAQ Section -->
+<section id="faq" class="faq-section" aria-label="Frequently Asked Questions">
+  <h2>❓ Frequently Asked Questions</h2>
+
+  <div class="faq-item">
+    <h3>What is TDEE?</h3>
+    <p>Your Total Daily Energy Expenditure is the total number of calories you burn each day through your Basal Metabolic Rate (BMR) and all activity. It’s your daily “energy budget.”</p>
+  </div>
+
+  <div class="faq-item">
+    <h3>Which formula should I choose?</h3>
+    <p>If you don’t know your body fat percentage, use Mifflin–St Jeor with your sex assigned or gender identity. If you know your body fat %, choose Katch–McArdle for more accuracy.</p>
+  </div>
+
+  <div class="faq-item">
+    <h3>How accurate is this calculator?</h3>
+    <p>It’s an estimate — individual calorie needs vary due to metabolism, genetics, and lifestyle. Use your results as a starting point and adjust based on real progress.</p>
+  </div>
+
+  <div class="faq-item">
+    <h3>Do I need to exercise to lose weight?</h3>
+    <p>Not strictly, but regular movement supports better results, muscle retention, and long-term health. Even light daily activity can make a big difference.</p>
+  </div>
+
+  <div class="faq-item">
+    <h3>How often should I recalculate my TDEE?</h3>
+    <p>Every 5–10 lbs (2–5 kg) of weight change or when your activity level changes significantly.</p>
+  </div>
+
+  <div class="faq-item">
+    <h3>How did you come up with your AMAB/AFAB calculations?</h3>
+    <p>During the first year of HRT, body composition and energy needs shift gradually from your pre-HRT baseline toward your affirmed sex—not overnight. 
+      To reflect that month-to-month variance, this calculator blends the “male” and “female” Mifflin-St Jeor equations across the first 12 months, then uses the affirmed-gender version after month 12. This is an estimate and not medical advice—if you have any doubt, consult a doctor (or a registered dietitian)..</p>
+  </div>
+</section>
+
+
+      <footer class="site-footer">
+        <p>© 2025 TDEE Calculator — Estimates for educational purposes only. Consult a clinician for medical advice.</p>
+      </footer>
+    </div>
+  </header>
+</div>
+
+<script defer src="tdee_accessible_v1.2.js"></script>
+
+<button id="backToTop" class="back-to-top" type="button" aria-label="Back to top" hidden><span aria-hidden="true">↑</span></button>
+<div id="toast" role="status" aria-live="polite" hidden class="toast"></div>
+  <button id="backToTopFloating" type="button" aria-label="Back to top">
+    <span aria-hidden="true">↑</span>
+    <span>Back to Top</span>
+  </button>
+</body>
+</html>
