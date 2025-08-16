@@ -265,8 +265,8 @@ function showToast(msg, ms=1400){
 // Export helpers (unchanged but stable)
 function serializeSVG(svg){
   const clone = svg.cloneNode(true);
-  clone.setAttribute('xmlns','http://www.w3.org/2000/svg');
-  clone.setAttribute('xmlns:xlink','http://www.w3.org/1999/xlink');
+  clone.setAttribute('xmlns','https://www.w3.org/2000/svg');
+  clone.setAttribute('xmlns:xlink','https://www.w3.org/1999/xlink');
   const w = parseInt(svg.getAttribute('width')) || svg.clientWidth || 800;
   const h = parseInt(svg.getAttribute('height')) || svg.clientHeight || 400;
   clone.setAttribute('width', String(w));
